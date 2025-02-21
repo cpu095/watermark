@@ -80,7 +80,9 @@ class GaussianBlur:
         sigma = random.uniform(*self.sigma_range)
         kernel = self._create_gaussian_kernel(self.kernel_size, sigma)
         kernel = kernel.unsqueeze(0).unsqueeze(0).repeat(image.shape[0], 1, 1, 1)  # Shape: [channels, 1, kernel_size, kernel_size]
-        
+        ##增加了这行
+        kernel = kernel.to(image.device)
+        ##
         blurred_image = F.conv2d(image.unsqueeze(0), kernel, padding=self.kernel_size // 2, groups=image.shape[0])
         return blurred_image.squeeze(0)
 

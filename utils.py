@@ -267,7 +267,7 @@ class SiameseNetwork(nn.Module):
 
 #Get results
 
-def eval_res(ex_value, dex_value, dx_value, x_value):
+def eval_res(ex_value, dex_value, dx_value, x_value, save_path):
     ex_values = torch.cat(ex_value).detach().cpu()
     dex_values = torch.cat(dex_value).detach().cpu()
     dx_values = torch.cat(dx_value).detach().cpu()
@@ -278,6 +278,7 @@ def eval_res(ex_value, dex_value, dx_value, x_value):
     dex_label = torch.ones_like(dex_values)
     dx_label = torch.zeros_like(dx_values)
     x_label = torch.zeros_like(x_values)
+    
     # Combine the labels and scores
     all_labels = torch.cat([ex_label, dex_label, dx_label, x_label])
     all_scores = torch.cat([ex_values, dex_values, dx_values, x_values])  # Negate dx_value and x_value scores because you want them to be < 0
@@ -306,8 +307,13 @@ def eval_res(ex_value, dex_value, dx_value, x_value):
     plt.ylabel('True Positive Rate')
     plt.title('Receiver Operating Characteristic (ROC)')
     plt.legend(loc="lower right")
-    plt.show()
 
+    # Save the plot to the specified path
+    plt.savefig(save_path)  # Save the figure to the file path
+    plt.close()  # Close the figure to free up memory
+
+    
+##max_lr=1e-3
 def adjust_learning_rate(optimizer, epoch, max_lr = 1e-3, min_lr = 1e-6, warmup_epochs = 3, total_epochs = 30):
     """Decay the learning rate with half-cycle cosine after warmup"""
     if epoch < warmup_epochs:
